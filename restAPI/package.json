@@ -1,0 +1,18 @@
+{
+  "name": "restapi",
+  "version": "1.0.0",
+  "description": "Backend de la aplicacion de pedidos",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./index.js"
+  },
+  "author": "Natanael Venegas",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.8.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
