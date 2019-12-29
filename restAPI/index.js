@@ -4,6 +4,10 @@ const http = require('http');
 const routes = require('./routes');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors'); 
+
+//cors permite que un cliente se conecte a otro servidor para el intercambio de recursos
+
 //conectar con mongodb
 mongoose.Promise = global.Promise; 
 mongoose.connect('mongodb://localhost/restapi',{
@@ -18,6 +22,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
+
+//habilitar cors para dar acceso remoto a clientes que van a consumir la api
+
+app.use(cors());
 
 const server = http.createServer(app);
 

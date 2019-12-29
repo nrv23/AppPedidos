@@ -1,25 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Fragment} from 'react';
+import {BrowserRouter as Router,Route,Switch} from 'react-router-dom'
+import Header from './componentes/layout/Header';
+import Navegacion from './componentes/layout/Navegacion';
+import Clientes from './componentes/clientes/Clientes';
+import Productos from './componentes/productos/Productos';
+import Pedidos from './componentes/pedidos/Pedidos';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Fragment>
+        <Header />
+        <div className="grid contenedor contenido-principal">
+          <Navegacion />
+          <main className="caja-contenido col-9"> 
+            {/*/Routing del sistema*/}
+            <Switch>
+              <Route exact path="/" component={Clientes}></Route>
+              <Route exact path="/productos" component={Productos}></Route>
+              <Route exact path="/pedidos" component={Pedidos}></Route>
+            </Switch>
+          </main>
+        </div>
+      </Fragment>
+    </Router>
   );
 }
 
