@@ -24,4 +24,6 @@ const server = http.createServer(app);
 
 app.use('/',routes());
 
-server.listen(5000);
+server.listen(5000, () => {
+	console.log("Escuchando en el puerto 5000");
+});
