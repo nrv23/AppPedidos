@@ -2,6 +2,7 @@ const Clientes = require('../models/Clientes');
 
 
 exports.nuevoCliente = async (req, res, next) => {
+
 	const cliente = new Clientes(req.body);
 
 	try {
@@ -12,7 +13,7 @@ exports.nuevoCliente = async (req, res, next) => {
 		})
 	} catch(e) {
 		// statements
-		console.log(e);
+		res.send(e);
 		next();
 	}
 }
@@ -68,7 +69,7 @@ exports.actualizarCliente = async (req, res, next) => {
 
 	} catch(e) {
 		// statements
-		console.log(e);
+		res.send(e);
 		next()
 	}
 }

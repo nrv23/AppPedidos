@@ -5,6 +5,8 @@ import Navegacion from './componentes/layout/Navegacion';
 import Clientes from './componentes/clientes/Clientes';
 import Productos from './componentes/productos/Productos';
 import Pedidos from './componentes/pedidos/Pedidos';
+import NuevoCliente from './componentes/clientes/NuevoCliente';
+import EditarCliente from './componentes/clientes/EditarCliente';
 
 function App() {
   return (
@@ -17,8 +19,11 @@ function App() {
             {/*/Routing del sistema*/}
             <Switch>
               <Route exact path="/" component={Clientes}></Route>
+              <Route exact path="/clientes/nuevo" component={NuevoCliente}></Route>
+              <Route exact path="/clientes/editar/:id" component={EditarCliente}></Route>
               <Route exact path="/productos" component={Productos}></Route>
               <Route exact path="/pedidos" component={Pedidos}></Route>
+
             </Switch>
           </main>
         </div>
