@@ -116,7 +116,7 @@ exports.eliminarProducto = async (req, res, next) => {
 
 	try {
 		await Productos.findByIdAndDelete({_id: id});
-		res.json({mensaje: 'produto eliminado'})
+		res.json({mensaje: 'producto eliminado'})
 	} catch(e) {
 		// statements
 		console.log(e);

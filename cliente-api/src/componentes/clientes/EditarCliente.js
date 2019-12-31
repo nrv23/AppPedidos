@@ -25,9 +25,10 @@ const EditarCliente = (props) => {
 			.catch(err => console.error(err));
 	}
 	
-	useEffect(() => {
+	useEffect(() => { // siempre se deben pasar en un array de dependencias todos los parametros
+		// de cada funcion que se corran dentro del useEffect
 		buscarCliente(id);
-	},[]);
+	},[id]);
 
 	const actualizarState = e => {
 
@@ -41,7 +42,7 @@ const EditarCliente = (props) => {
 
 	const validarCliente = () => {
 
-		const {nombre,apellido,empresa,correo,telefono} = cliente;
+		const {nombre,apellido,empresa,telefono} = cliente;
 		let valido = !nombre.length || !apellido.length || !empresa.length || !telefono.length;
 		//valido devuelve true si alguno de los campos esta vacio
 

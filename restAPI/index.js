@@ -32,6 +32,11 @@ const server = http.createServer(app);
 
 app.use('/',routes());
 
+//habilitar carpeta publica para listar las imagenes de los productos
+
+app.use(express.static('uploads')); // al ejecutar esta linea de codigo, el sistema toma esta direccion
+// ala carpeta como la base para poder buscar archivos publicos
+
 server.listen(5000, () => {
 	console.log("Escuchando en el puerto 5000");
 });

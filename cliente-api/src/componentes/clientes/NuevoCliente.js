@@ -25,7 +25,7 @@ const NuevoCliente = ({history}) => {
 
 	const validarCliente = () => {
 
-		const {nombre,apellido,empresa,correo,telefono} = cliente;
+		const {nombre,apellido,empresa,telefono} = cliente;
 		let valido = !nombre.length || !apellido.length || !empresa.length || !telefono.length;
 		//valido devuelve true si alguno de los campos esta vacio
 
@@ -62,7 +62,7 @@ const NuevoCliente = ({history}) => {
 		 <Fragment>
             <h2>Nuevo Cliente</h2>
 				<form
-					onSubmit={agregarCliente}
+					onSubmit={agregarCliente} method="POST"
 				>
 	                <legend>Llena todos los campos</legend>
 

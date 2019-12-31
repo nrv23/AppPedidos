@@ -28,7 +28,7 @@ exports.mostrarClientes = async (req, res, next) => {
 
 	} catch(e) {
 		// statements
-		console.log(e);
+		res.send(e);
 		next();
 	}
 }
@@ -51,7 +51,7 @@ exports.obtenerCliente = async (req, res, next) => {
 
 	} catch(e) {
 		// statements
-		console.log(e);
+		res.send(e);
 		next();
 	}
 }
@@ -88,7 +88,7 @@ exports.eliminarCliente = async (req, res,next) =>{
 
 	} catch(e) {
 		// statements
-		console.log(e);
-		next()
+		res.send(e);
+		next();
 	}
 }

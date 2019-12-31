@@ -2,29 +2,32 @@ import React, {useEffect, useState, Fragment} from 'react';
 import {Link} from 'react-router-dom';
 import clienteAxios from '../../config/axios';
 import Cliente from './Cliente';
+import Spinner from '../layout/Spinner';
 
 const Clientes = () => {
 
 	//declarar el state 
-	const [clientes,guardarCliente] = useState([]);
+	const [clientes,guardarClientes] = useState([]);
 
 
-	const consultarApi = async () => {
+	const consultarApi =  () => {
 
-		const clientesAPI = await clienteAxios.get('/clientes');
-
-		if(clientesAPI.data.length > 0){
-			guardarCliente(clientesAPI.data);
-		}
-		
+		clienteAxios.get('/clientes')
+		.then(respuesta => {
+			guardarClientes(respuesta.data);
+		});
 	}
 
 	useEffect(() => {
 		//dentro del hook useEffect no se debe ejecutar codigo plano, siempre funciones, es
 		//una buena practica
 		consultarApi();
-	}, []); // pasar un arreglo vacio cuando no hayan dependencias necesarias en useEffect
+	}, [clientes]); // pasar un arreglo vacio cuando no hayan dependencias necesarias en useEffect
 			// porque a veces useEffect se queda enciclado
+			// este paso le envio como parametro el state de cliente, cuando esa de clientes  se cargue 
+			// o se actualice, react renderiza de nuevo el componente
+
+	if(!clientes.length) return <Spinner/>
 
 	return (
 		
