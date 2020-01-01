@@ -9,6 +9,7 @@ import NuevoCliente from './componentes/clientes/NuevoCliente';
 import EditarCliente from './componentes/clientes/EditarCliente';
 import NuevoProducto from './componentes/productos/NuevoProducto';
 import EditarProducto from './componentes/productos/EditarProducto';
+import NuevoPedido from './componentes/pedidos/NuevoPedido';
 
 function App() {
   return (
@@ -26,8 +27,9 @@ function App() {
               <Route exact path="/productos" component={Productos}></Route>
               <Route exact path="/productos/nuevo" component={NuevoProducto}></Route>
               <Route exact path="/productos/editar/:id" component={EditarProducto}></Route> 
-
+              <Route exact path="/pedidos/nuevo" component={NuevoPedido}></Route>  
               <Route exact path="/pedidos" component={Pedidos}></Route>
+              <Route exact path="/pedidos/nuevo/:id" component={NuevoPedido}></Route>  
 
             </Switch>
           </main>

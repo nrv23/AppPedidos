@@ -36,7 +36,7 @@ const EditarProducto = (props) => {
 		});
 	}
 
-	const actualizarProducto = (e) => {
+	const actualizarProducto = (e) => { 
 
 		e.preventDefault();
 
@@ -75,7 +75,7 @@ const EditarProducto = (props) => {
 		consultarAPI(id)
 	}, [id]);
 
-	if(producto.nombre =='') return <Spinner/>
+	if(producto.nombre ==='') return <Spinner/>
 
 	return (
 		
@@ -140,4 +140,4 @@ const EditarProducto = (props) => {
 }
 
 
-export default EditarProducto;
+export default withRouter(EditarProducto);

@@ -1,6 +1,7 @@
 const Pedidos = require('../models/Pedidos');
 
 exports.nuevoPedido= async (req, res, next) => {
+	console.log(req.body)
 	try {
 		const pedido = new Pedidos(req.body);
 		await pedido.save();

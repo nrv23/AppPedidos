@@ -18,7 +18,15 @@ const Productos = () => {
 
 	useEffect(() => {
 		consultarApi();
-	},[productos]);
+
+		return () => { // esta funcion se debe correr siempre cada vez que se llene el state,
+			//la funcion borra el los datos en la funcion de actualizar el state y hace un mejor 
+			//manejo de memoria, y se debe pasar como parametro la funcion en las dependencias del 
+			//useEffect
+			guardarProductos([]);
+		}
+
+	},[guardarProductos]);
 
 if(!productos.length) return <Spinner/>; /*Cargar el spinner antes de cargar los productos*/
 

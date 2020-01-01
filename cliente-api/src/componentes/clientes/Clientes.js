@@ -22,7 +22,11 @@ const Clientes = () => {
 		//dentro del hook useEffect no se debe ejecutar codigo plano, siempre funciones, es
 		//una buena practica
 		consultarApi();
-	}, [clientes]); // pasar un arreglo vacio cuando no hayan dependencias necesarias en useEffect
+
+		return () => {
+			guardarClientes([]);
+		}
+	}, [guardarClientes]); // pasar un arreglo vacio cuando no hayan dependencias necesarias en useEffect
 			// porque a veces useEffect se queda enciclado
 			// este paso le envio como parametro el state de cliente, cuando esa de clientes  se cargue 
 			// o se actualice, react renderiza de nuevo el componente

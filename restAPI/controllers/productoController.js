@@ -123,3 +123,30 @@ exports.eliminarProducto = async (req, res, next) => {
 		next();
 	}
 } 
+
+
+exports.buscarProducto = async (req, res, next) => {
+
+	try {
+
+		const {query} = req.params;
+
+		const producto = await Productos.find({
+			nombre: new RegExp(query,'i') // el primer parametro va ser la palabra clave para 
+			//coincidencias en la busqueda, el segundo parametro que sea case insensitive,
+			//es decir buscar por NODE, node o Node y que filtre las busquedas
+		});
+		
+		if(producto.length == 0){
+
+			return res.json({mensaje: 'No hay resultados'});
+		}
+
+		res.json(producto);
+
+	} catch(e) {
+		console.log(e);
+		next();
+	}
+
+}

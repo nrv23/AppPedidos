@@ -47,6 +47,10 @@ const Cliente = ({cliente}) => { // hace destructuring directamente al props en 
 	                <i className="fas fa-pen-alt"></i>
 	                Editar Cliente
 	            </Link >
+	            <Link to={'/pedidos/nuevo/'+cliente._id} className="btn btn-amarillo">
+	                <i className="fas fa-plus"></i>
+	                Nuevo Pedido
+	            </Link >
 	            <button type="button" className="btn btn-rojo btn-eliminar"
 	            	onClick={() => eliminarCliente(cliente._id)}
 

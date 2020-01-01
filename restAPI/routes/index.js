@@ -1,6 +1,7 @@
 const clienteController = require('../controllers/clienteController');
 const productoController = require('../controllers/productoController');
 const pedidosController = require('../controllers/pedidosController');
+const usuarioController = require('../controllers/UsuariosController');
 const express = require('express');
 const router = express.Router();
 
@@ -18,7 +19,8 @@ module.exports = () => {
 	router.get('/productos',productoController.mostrarProductos);
 	router.get('/productos/:id',productoController.mostrarProducto);
 	router.put('/productos/:id', productoController.subirArchivo, productoController.actualizarProducto);
-	router.delete('/productos/:id', productoController.eliminarProducto);	
+	router.delete('/productos/:id', productoController.eliminarProducto);
+	router.post('/productos/busqueda/:query', productoController.buscarProducto);		
 
 	//Pedidos
 	router.post('/pedidos', pedidosController.nuevoPedido);
@@ -26,6 +28,10 @@ module.exports = () => {
 	router.get('/pedidos/:id', pedidosController.mostrarPedido);
 	router.put('/pedidos/:id', pedidosController.actualizarPedido);
 	router.delete('/pedidos/:id',pedidosController.eliminarPedido);
+
+	//Usuarios
+	router.post('/crear-cuenta', usuarioController.registrarUsuario);
+	router.post('/iniciar-sesion', usuarioController.autenticarUsuario);
 
 	
 	return router;
