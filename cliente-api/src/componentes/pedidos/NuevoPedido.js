@@ -1,10 +1,11 @@
-import React,{useState,Fragment,useEffect} from 'react';
+import React,{useState,Fragment,useEffect,useContext} from 'react';
 import {withRouter} from 'react-router-dom';
 import Swal from 'sweetalert2';
 import clienteAxios from '../../config/axios';
 import Spinner from '../layout/Spinner';
 import FormBuscarProducto from './FormBuscarProducto';
 import FormCantidadPedido from './FormCantidadPedido';
+import {CRMContext} from '../../context/CRMContext';
 
 const NuevoPedido = (props) =>{
 
@@ -13,36 +14,69 @@ const NuevoPedido = (props) =>{
 	const [busqueda, guardarBusqueda] = useState('');
 	const [productos, guardarProductos] = useState([]); //lista de productos por pedido
 	const [total, guardarTotal] = useState(0);
+	const [auth] = useContext(CRMContext);
 
 	const consultarAPI = () => {
 		///pedidos/:id
-		clienteAxios.get('/clientes/'+idcliente)
-			.then(response =>  {
-				guardarCliente(response.data);
-			});
+		if(auth.token!== ''){
+			try {
+				clienteAxios.get('/clientes/'+idcliente,{
+					headers: {
+						Authorization: 'Bearer '+auth.token
+					}
+				})
+				.then(response =>  {
+					guardarCliente(response.data);
+				});
+			} catch (error) {
+				if(error.response.status === 500){ // si viene un token pero no valido o vencido,
+					//redirecciona a iniciar sesion
+					props.history.push('/iniciar-sesion')
+				} 
+			}
+		}else{
+			props.history.push('/iniciar-sesion');
+		}
 	}
 
 	const buscarProducto = e => {
 		e.preventDefault();
 
-		const query = busqueda;
-		const url ='/productos/busqueda/'+query;
-		clienteAxios.post(url).then(response => {
-			if(response.data.mensaje){
-				Swal.fire({
-					type: 'error',
-					title: 'Búsqueda',
-					text: 'No hay resultados'
-				})
-			}else{
-
-				let productoResultado = response.data[0];
-				productoResultado.producto = response.data[0]._id; //agregar la llave producto (copia del id del producto)
-				productoResultado.cantidad= 0;
+		if(auth.auth){
+			console.log('Bearer '+auth.token)
+			try {
+				const query = busqueda;
+				const url ='/productos/busqueda/'+query;
 				
-				guardarProductos([...productos, productoResultado]);
+				clienteAxios.post(url,{
+					headers: {
+						Authorization: 'Bearer '+auth.token
+					}
+				}).then(response => {
+					if(response.data.mensaje){
+						Swal.fire({
+							type: 'error',
+							title: 'Búsqueda',
+							text: 'No hay resultados'
+						})
+					}else{
+
+						let productoResultado = response.data[0];
+						productoResultado.producto = response.data[0]._id; //agregar la llave producto (copia del id del producto)
+						productoResultado.cantidad= 0;
+						
+						guardarProductos([...productos, productoResultado]);
+					}
+				})
+			} catch (error) {
+				if(error.response.status === 500){ // si viene un token pero no valido o vencido,
+					//redirecciona a iniciar sesion
+					props.history.push('/iniciar-sesion')
+				} 
 			}
-		})
+		}else{
+			props.history.push('/iniciar-sesion');
+		}
 	}	
 
 	const leerDatosBusqueda = e =>{
@@ -92,48 +126,54 @@ const NuevoPedido = (props) =>{
 
 		//crear el objeto del pedido a enviar a la bd
 
-		let listaProductos={};
-		const {id} = props.match.params;
-		const pedido ={
-			cliente : id,
-			pedido:  [],
-			total
-		}
+		if(auth.token !== ''){
 
-		productos.forEach((producto,i) => {
-			listaProductos[i] ={
-				"producto": producto.producto,
-				"cantidad": producto.cantidad
+			let listaProductos={};
+			const {id} = props.match.params;
+			const pedido ={
+				cliente : id,
+				pedido:  [],
+				total
 			}
 
-			pedido.pedido.push(listaProductos[i]);
-		})
-
-		console.log(pedido);
-
-		try {
-			clienteAxios.post('/pedidos',pedido)
-			.then(respuesta => {
-				
-				if(respuesta.status === 200){
-					Swal.fire({
-						type:'success',
-						title: 'Nuevo Pedido',
-						text: respuesta.data.mensaje
-					})
-					
-				}else{
-					Swal.fire({
-						type:'error',
-						title: 'Error',
-						text: 'No se pudo agregar el pedido'
-					})
+			productos.forEach((producto,i) => {
+				listaProductos[i] ={
+					"producto": producto.producto,
+					"cantidad": producto.cantidad
 				}
 
-				props.history.push('/pedidos');
+				pedido.pedido.push(listaProductos[i]);
 			})
-		} catch(e) {
-			console.error(e);
+
+			try {
+				clienteAxios.post('/pedidos',pedido)
+				.then(respuesta => {
+					
+					if(respuesta.status === 200){
+						Swal.fire({
+							type:'success',
+							title: 'Nuevo Pedido',
+							text: respuesta.data.mensaje
+						})
+						
+					}else{
+						Swal.fire({
+							type:'error',
+							title: 'Error',
+							text: 'No se pudo agregar el pedido'
+						})
+					}
+
+					props.history.push('/pedidos');
+				})
+			} catch(error) {
+				if(error.response.status === 500){ // si viene un token pero no valido o vencido,
+					//redirecciona a iniciar sesion
+					props.history.push('/iniciar-sesion');
+				} 
+			}
+		}else{
+			props.history.push('/iniciar-sesion');
 		}
 	}
 

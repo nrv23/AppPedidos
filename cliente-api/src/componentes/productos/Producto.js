@@ -1,37 +1,54 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
+import React,{useContext} from 'react';
+import {Link,withRouter} from 'react-router-dom';
 import Swal from 'sweetalert2';
 import clienteAxios from '../../config/axios';
+import {CRMContext} from '../../context/CRMContext';
 
-const Producto = ({producto}) => {
+const Producto = (props) => {
 
-	const {_id, nombre, precio, imagen} = producto;
+	const {_id, nombre, precio, imagen} = props.producto;
+	const [auth] = useContext(CRMContext);
 
 	const eliminarProducto = id => {
 
+		if(auth.auth){
+			
 		Swal.fire({
-		  title: 'Está seguro?',
-		  text: 'El registro del producto no se podrá recuperar',
-		  icon: 'warning',
-		  showCancelButton: true,
-		  confirmButtonText: 'Borrar',
-		  cancelButtonText: 'Cancelar'
-		}).then((result) => {
-		  if (result.value) {
-		    
-		    const url=`/productos/${_id}`;
-		    clienteAxios.delete(url)
-		    .then(respuesta => {	
-		    	if(respuesta.status === 200){
-		    		Swal.fire( 
-				      'Eliminado!',
-				      respuesta.data.mensaje,
-				      'success'
-				    )
-		    	}
-		    })
-		  }
-		})
+			title: 'Está seguro?',
+			text: 'El registro del producto no se podrá recuperar',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonText: 'Borrar',
+			cancelButtonText: 'Cancelar'
+			}).then((result) => {
+				if (result.value) {
+					try {
+						const url=`/productos/${_id}`;
+						clienteAxios.delete(url,{
+							headers: {
+								Authorization: 'Bearer '+auth.token
+							}
+						})
+						.then(respuesta => {	
+							if(respuesta.status === 200){
+								Swal.fire( 
+								'Eliminado!',
+								respuesta.data.mensaje,
+								'success'
+								)
+							}
+						})
+					} catch (error) {
+						if(error.response.status === 500){ // si viene un token pero no valido o vencido,
+							//redirecciona a iniciar sesion
+							props.history.push('/iniciar-sesion')
+						}  
+					}
+				}
+			})
+		}else{
+			props.history.push('/iniciar-sesion')
+		}
 	}
 
 	return (		
@@ -63,4 +80,4 @@ const Producto = ({producto}) => {
 }
 
 
-export default Producto;
+export default withRouter(Producto);

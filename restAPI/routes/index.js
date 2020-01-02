@@ -2,8 +2,8 @@ const clienteController = require('../controllers/clienteController');
 const productoController = require('../controllers/productoController');
 const pedidosController = require('../controllers/pedidosController');
 const usuarioController = require('../controllers/UsuariosController');
-const express = require('express');
 const autorizacion = require('../middleware/auth');
+const express = require('express');
 const router = express.Router();
 
 module.exports = () => {
@@ -31,11 +31,9 @@ module.exports = () => {
     router.delete('/pedidos/:id', autorizacion, pedidosController.eliminarPedido);
 
     //Usuarios
-    router.post('/crear-cuenta', usuarioController.registrarUsuario);
+    router.post('/crear-cuenta', autorizacion, usuarioController.registrarUsuario); // solo el 
+    // de la aplicacion cliente puede crear cuentas
     router.post('/iniciar-sesion', usuarioController.autenticarUsuario);
-
-    //middleware para proteger las rutas
-
 
     return router;
 }

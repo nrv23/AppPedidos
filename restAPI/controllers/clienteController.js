@@ -1,94 +1,94 @@
 const Clientes = require('../models/Clientes');
 
 
-exports.nuevoCliente = async (req, res, next) => {
+exports.nuevoCliente = async(req, res, next) => {
+    console.log(req.body);
+    const cliente = new Clientes(req.body);
 
-	const cliente = new Clientes(req.body);
+    try {
 
-	try {
-		
-		await cliente.save();
-		res.status(200).json({
-			mensaje: 'Cliente insertado'
-		})
-	} catch(e) {
-		// statements
-		res.send(e);
-		next();
-	}
+        await cliente.save();
+        res.status(200).json({
+            mensaje: 'Cliente insertado'
+        })
+    } catch (e) {
+        // statements
+        res.send(e);
+        next();
+    }
 }
 
 
-exports.mostrarClientes = async (req, res, next) => {
+exports.mostrarClientes = async(req, res, next) => {
 
-	try {
-		
-		const clientes = await Clientes.find({});
-		res.status(200).send(clientes);
+    try {
 
-	} catch(e) {
-		// statements
-		res.send(e);
-		next();
-	}
+        const clientes = await Clientes.find({});
+        res.status(200).send(clientes);
+
+    } catch (e) {
+        // statements
+        res.send(e);
+        next();
+    }
 }
 
-exports.obtenerCliente = async (req, res, next) => {
+exports.obtenerCliente = async(req, res, next) => {
 
-	const {id} = req.params;
+    const { id } = req.params;
 
-	try {
-		
-		const cliente = await Clientes.findById(id);
+    try {
 
-		if(!cliente){
-			res.json({
-				mensaje: 'No encontrado'
-			})
-		}
+        const cliente = await Clientes.findById(id);
 
-		res.status(200).send(cliente);
+        if (!cliente) {
+            res.json({
+                mensaje: 'No encontrado'
+            })
+        }
 
-	} catch(e) {
-		// statements
-		res.send(e);
-		next();
-	}
+        res.status(200).send(cliente);
+
+    } catch (e) {
+        // statements
+        res.send(e);
+        next();
+    }
 }
 
-exports.actualizarCliente = async (req, res, next) => {
-	const {id} = req.params;
-	
-	try {
-		
-		const cliente = await Clientes.findOneAndUpdate({_id: id},req.body,{
-			new: true // devolver el registro con la ultima actualizacion
-		})
+exports.actualizarCliente = async(req, res, next) => {
+    const { id } = req.params;
 
-		res.json(cliente);
+    try {
 
-	} catch(e) {
-		// statements
-		res.send(e);
-		next()
-	}
+        const cliente = await Clientes.findOneAndUpdate({ _id: id }, req.body, {
+            new: true // devolver el registro con la ultima actualizacion
+        })
+
+        res.json(cliente);
+
+    } catch (e) {
+        // statements
+        res.send(e);
+        next()
+    }
 }
 
-exports.eliminarCliente = async (req, res,next) =>{
-	
-	const {id} = req.params;
+exports.eliminarCliente = async(req, res, next) => {
 
-	try {
-		
-		await Clientes.findOneAndDelete({_id: id});
+    const { id } = req.params;
 
-		res.json({
-			mensaje: 'Cliente eliminado'
-		});
+    try {
 
-	} catch(e) {
-		// statements
-		res.send(e);
-		next();
-	}
+        await Clientes.findOneAndDelete({ _id: id });
+
+        res.json({
+            mensaje: 'Cliente eliminado'
+        });
+
+    } catch (e) {
+        // statements
+        res.send(e);
+        next();
+    }
 }

@@ -1,11 +1,13 @@
-import React, {Fragment, useState} from 'react';
+import React, {Fragment, useState,useContext} from 'react';
 import {withRouter} from 'react-router-dom';
 import clienteAxios from '../../config/axios';
 import Swal from 'sweetalert2';
+import {CRMContext} from '../../context/CRMContext';
 
-
-const NuevoProducto = ({history}) => {
-
+const NuevoProducto = (props) => {
+	
+	const {history} = props;
+	const [auth] = useContext(CRMContext);
 	const [producto, guardarProducto] = useState({
 		nombre: '',
 		precio: ''
@@ -28,41 +30,51 @@ const NuevoProducto = ({history}) => {
 
 	const agregarProducto = async e => {
 		e.preventDefault();
+		if(auth.auth){
 
 		//crear el form data para enviar la imagen al servidor
-		const formData = new FormData();// esto me permite enviar archivos al servidor
-		formData.append('nombre',producto.nombre);
-		formData.append('precio',producto.precio);
-		formData.append('imagen',imagen);
+			const formData = new FormData();// esto me permite enviar archivos al servidor
+			formData.append('nombre',producto.nombre);
+			formData.append('precio',producto.precio);
+			formData.append('imagen',imagen);
 
-		//al enviar el formData al servidor llega como req.body y la imagen como req.file
+			//al enviar el formData al servidor llega como req.body y la imagen como req.file
 
-		try {
-			
-			const respuesta =  await clienteAxios.post('/productos',formData,{
-			 	headers:{ // enviar la cabecera para que el servidor reciba el objeto con la imagen
-			 		'Content-Type': 'multipart/form-data'
-			 	}
-			 });
-			
-			if(respuesta.status === 200){
-				Swal.fire(
-					'Agregar Producto',
-					respuesta.data.mensaje,
-					'success'
-				)
-				history.push('/productos');
+			try {
+				
+				const respuesta =  await clienteAxios.post('/productos',formData,{
+					headers:{ // enviar la cabecera para que el servidor reciba el objeto con la imagen
+						'Content-Type': 'multipart/form-data',
+						Authorization: 'Bearer '+auth.token
+					}
+				});
+				
+				if(respuesta.status === 200){
+					Swal.fire(
+						'Agregar Producto',
+						respuesta.data.mensaje,
+						'success'
+					)
+					history.push('/productos');
 
+				}
+
+			} catch(error) {
+				// statements
+				console.log(error);
+				if(error.response.status === 500){ // si viene un token pero no valido o vencido,
+					//redirecciona a iniciar sesion
+					props.history.push('/iniciar-sesion')
+				} else{  
+					Swal.fire({
+						type: 'error',
+						title: 'Hubo un error',
+						text: 'Error al agregar el producto'
+					})
+				}
 			}
-
-		} catch(e) {
-			// statements
-			console.log(e);
-			Swal.fire({
-				type: 'error',
-				title: 'Hubo un error',
-				text: 'Error al agregar el producto'
-			})
+		}else{
+			props.history.push('/iniciar-sesion')
 		}
 	}
 

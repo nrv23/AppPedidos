@@ -1,30 +1,47 @@
-import React, {Fragment, useState, useEffect} from 'react';
-import {Link} from 'react-router-dom';
+import React, {Fragment, useState, useEffect,useContext} from 'react';
+import {Link,withRouter} from 'react-router-dom';
 import Producto from './Producto';
 import clienteAxios from '../../config/axios';
 import Spinner from '../layout/Spinner';
+import {CRMContext} from '../../context/CRMContext';
 
-const Productos = () => {
+const Productos = (props) => {
 
 	const [productos,guardarProductos] = useState([]);
+	const [auth] = useContext(CRMContext);
 
 	const consultarApi = async () => {
 
-		const productosAPI = await clienteAxios.get('/productos');
+		const productosAPI = await clienteAxios.get('/productos',{headers:{
+			Authorization: 'Bearer '+auth.token
+		}});
 
 		guardarProductos(productosAPI.data.productos);
 		
 	}
 
 	useEffect(() => {
-		consultarApi();
-
-		return () => { // esta funcion se debe correr siempre cada vez que se llene el state,
-			//la funcion borra el los datos en la funcion de actualizar el state y hace un mejor 
-			//manejo de memoria, y se debe pasar como parametro la funcion en las dependencias del 
-			//useEffect
-			guardarProductos([]);
+		
+		if(auth.auth){
+			try {
+				consultarApi();
+	
+				return () => { // esta funcion se debe correr siempre cada vez que se llene el state,
+					//la funcion borra el los datos en la funcion de actualizar el state y hace un mejor 
+					//manejo de memoria, y se debe pasar como parametro la funcion en las dependencias del 
+					//useEffect
+					guardarProductos([]);
+				}
+			} catch (error) {
+				if(error.response.status === 500){ // si viene un token pero no valido o vencido,
+					//redirecciona a iniciar sesion
+					props.history.push('/iniciar-sesion')
+				} 
+			}
+		}else{
+			props.history.push('/iniciar-sesion');
 		}
+
 
 	},[guardarProductos]);
 
@@ -54,4 +71,4 @@ const Productos = () => {
 }
 
 
-export default Productos;
+export default withRouter(Productos);

@@ -1,36 +1,54 @@
-import React from 'react';
-import {Link} from 'react-router-dom'
+import React, {useContext} from 'react';
+import {Link} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import clienteAxios from '../../config/axios';
 import Swal from 'sweetalert2';
+import {CRMContext} from '../../context/CRMContext';
 
-const Cliente = ({cliente}) => { // hace destructuring directamente al props en los argumentos
+const Cliente = (props) => { // hace destructuring directamente al props en los argumentos
 	// de la funcion
 
-
+	const [auth] = useContext(CRMContext);
+	const {cliente,history} = props;
 	const eliminarCliente = (id) => {
 
-		Swal.fire({
-		  title: 'Está seguro?',
-		  text: 'El registro del cliente no se podrá recuperar',
-		  icon: 'warning',
-		  showCancelButton: true,
-		  confirmButtonText: 'Borrar',
-		  cancelButtonText: 'Cancelar'
-		}).then((result) => {
-		  if (result.value) {
-		    
-		    const url=`/clientes/${cliente._id}`;
-		    clienteAxios.delete(url)
-		    .then(respuesta => {	
-
-	    		 Swal.fire( 
-			      'Deleted!',
-			      respuesta.data.mensaje,
-			      'success'
-			    )
-		    })
-		  }
-		})
+		if(auth.token !== ''){
+			Swal.fire({
+				title: 'Está seguro?',
+				text: 'El registro del cliente no se podrá recuperar',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: 'Borrar',
+				cancelButtonText: 'Cancelar'
+			  }).then((result) => {
+				if (result.value) {
+				  
+				 try {
+					const url=`/clientes/${cliente._id}`;
+					clienteAxios.delete(url,{
+						headers: {
+							Authorization: 'Bearer '+auth.token
+						}
+					})
+					.then(respuesta => {	
+		
+						 Swal.fire( 
+						  'Deleted!',
+						  respuesta.data.mensaje,
+						  'success'
+						)
+					})
+				 } catch (error) {
+					if(error.response.status === 500){ // si viene un token pero no valido o vencido,
+						//redirecciona a iniciar sesion
+						props.history.push('/iniciar-sesion')
+					}  
+				 }
+				}
+			  })
+		}else{
+			history.push('/iniciar-sesion')
+		}
 	}
 
 	return (
@@ -67,4 +85,4 @@ const Cliente = ({cliente}) => { // hace destructuring directamente al props en 
 }
 
 
-export default Cliente;
+export default withRouter(Cliente);

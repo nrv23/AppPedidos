@@ -9,7 +9,7 @@ const Clientes = (props) => {
 
     //declarar el state 
     const [clientes, guardarClientes] = useState([]);
-    const [auth,guardarAuth] = useContext(CRMContext);
+    const [auth] = useContext(CRMContext);
  
     const consultarApi = () => {
 

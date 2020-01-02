@@ -1,10 +1,12 @@
-import React, {Fragment, useState} from 'react';
+import React, {Fragment, useState,useContext} from 'react';
 import {withRouter} from 'react-router-dom';
 import clienteAxios from '../../config/axios';
 import Swal from 'sweetalert2';
+import {CRMContext} from '../../context/CRMContext';
 
-const NuevoCliente = ({history}) => {
-
+const NuevoCliente = (props) => {
+	const {history} = props;
+	const [auth] = useContext(CRMContext);
 	const [cliente, guardarCliente] = useState({
 		nombre: '',
 		apellido: '',
@@ -12,6 +14,11 @@ const NuevoCliente = ({history}) => {
 		correo: '',
 		telefono: ''
 	});
+	
+
+	if(!auth.auth){
+		history.push('/iniciar-sesion');
+	}
 
 	const actualizarState = e => {
 
@@ -35,26 +42,41 @@ const NuevoCliente = ({history}) => {
 	const agregarCliente =  e => {
 		e.preventDefault();
 
-		clienteAxios.post('/clientes', cliente)
-			.then(respuesta => {
-				
-				if(respuesta.data.code === 11000){
-					//error de MOngo, correo duplicado
-					Swal.fire({
-						type: 'error',
-						title: 'Error',
-						text: 'El correo ya existe, inserte otro correo'
-					});
-
-				}else{
-
-					Swal.fire('Nuevo Cliente',
-							  respuesta.data.mensaje,
-							  'success');
-				}	
-
-				history.push('/'); // redireccionar a clientes
-			});
+		if(auth.token !== ''){
+			try {
+				clienteAxios.post('/clientes', cliente,{ //peticion post que envia headers al servidor
+					headers:{
+						Authorization: 'Bearer '+auth.token
+					}
+				})
+				.then(respuesta => {
+					
+					if(respuesta.data.code === 11000){
+						//error de MOngo, correo duplicado
+						Swal.fire({
+							type: 'error',
+							title: 'Error',
+							text: 'El correo ya existe, inserte otro correo'
+						});
+	
+					}else{
+	
+						Swal.fire('Nuevo Cliente',
+								  respuesta.data.mensaje,
+								  'success');
+					}	
+	
+					history.push('/'); // redireccionar a clientes
+				});
+			} catch (error) {
+				if(error.response.status === 500){ // si viene un token pero no valido o vencido,
+					//redirecciona a iniciar sesion
+					props.history.push('/iniciar-sesion')
+				} 
+			}
+		}else{
+			history.push('/iniciar-sesion');
+		}
 	}
 
 	return (
