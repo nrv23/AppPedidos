@@ -1,8 +1,12 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import {Link} from 'react-router-dom'
-
+import {CRMContext} from '../../context/CRMContext';
 
 const Navegacion = () => {
+
+    const [auth] = useContext(CRMContext);
+
+    if(!auth.auth) return null;
 
 	return (
 

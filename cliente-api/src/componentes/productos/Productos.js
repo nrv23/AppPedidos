@@ -28,7 +28,7 @@ const Productos = () => {
 
 	},[guardarProductos]);
 
-if(!productos.length) return <Spinner/>; /*Cargar el spinner antes de cargar los productos*/
+	if(!productos.length) return <Spinner/>; /*Cargar el spinner antes de cargar los productos*/
 
 	return (
 		
