@@ -18,6 +18,7 @@ const Clientes = (props) => {
                 Authorization: 'Bearer '+auth.token
             }
         }).then(respuesta => {
+            console.log(respuesta)
             guardarClientes(respuesta.data);
         });
     }
@@ -44,7 +45,9 @@ const Clientes = (props) => {
        }else{
          props.history.push('/iniciar-sesion');
        }
-    }, [guardarClientes]); // pasar un arreglo vacio cuando no hayan dependencias necesarias en useEffect
+    }, [guardarClientes]); 
+    
+    // pasar un arreglo vacio cuando no hayan dependencias necesarias en useEffect
     // porque a veces useEffect se queda enciclado
     // este paso le envio como parametro el state de cliente, cuando esa de clientes  se cargue 
     // o se actualice, react renderiza de nuevo el componente

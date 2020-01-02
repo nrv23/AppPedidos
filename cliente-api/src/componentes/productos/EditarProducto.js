@@ -1,8 +1,9 @@
-import React,{useState, useEffect,  Fragment} from 'react';
+import React,{useState, useEffect,  Fragment,useContext} from 'react';
 import {withRouter} from 'react-router-dom';
 import Spinner from '../layout/Spinner';
 import clienteAxios from '../../config/axios';
 import Swal from 'sweetalert2';
+import {CRMContext} from '../../context/CRMContext';
 
 const EditarProducto = (props) => {
 
@@ -13,7 +14,7 @@ const EditarProducto = (props) => {
 		precio: '',
 		imagen: ''
 	})
-
+	const [auth] = useContext(CRMContext);
 	const [imagen, guardarImagen] = useState('');
 
 	const leerArchivo = e => {
@@ -29,50 +30,80 @@ const EditarProducto = (props) => {
 	}
 
 	const consultarAPI = (id) => {
+		
 		const url='/productos/'+id;
-		clienteAxios.get(url)
+		clienteAxios.get(url,{
+			headers:{
+				Authorization: 'Bearer '+auth.token
+			}
+		})
 		.then(response => {
 			guardarProducto(response.data.producto);
 		});
+	
 	}
 
 	const actualizarProducto = (e) => { 
 
 		e.preventDefault();
 
-		//crear el objeto formData con la imagen
-		const formData = new FormData();// esto me permite enviar archivos al servidor
-		formData.append('nombre',producto.nombre);
-		formData.append('precio',producto.precio);
-		formData.append('imagen',imagen);
+		if(auth.auth){
+			//crear el objeto formData con la imagen
+			const formData = new FormData();// esto me permite enviar archivos al servidor
+			formData.append('nombre',producto.nombre);
+			formData.append('precio',producto.precio);
+			formData.append('imagen',imagen);
 
-		const url='/productos/'+id;
-		try {
-			clienteAxios.put(url,formData)
-			.then(response => {
-				if(response.status === 200){
-					Swal.fire(
-						'Actualizar Producto',
-						'Producto actualizado',
-						'success'
-					)
+			const url='/productos/'+id;
+			try {
+				clienteAxios.put(url,formData,{
+					headers:{
+						Authorization: 'Bearer '+auth.token
+					}
+				})
+				.then(response => {
+					if(response.status === 200){
+						Swal.fire(
+							'Actualizar Producto',
+							'Producto actualizado',
+							'success'
+						)
 
-					props.history.push('/productos');
+						props.history.push('/productos');
+					}
+				});
+			} catch(error) {
+				// statements
+				console.log(error);
+				if (error.response.status === 500) { // si viene un token pero no valido o vencido,
+					//redirecciona a iniciar sesion
+					props.history.push('/iniciar-sesion')
+				}else{
+					Swal.fire({
+						type: 'error',
+						title: 'Hubo un error',
+						text: 'Error al actualizar el producto'
+					})
 				}
-			});
-		} catch(e) {
-			// statements
-			console.log(e);
-			Swal.fire({
-				type: 'error',
-				title: 'Hubo un error',
-				text: 'Error al actualizar el producto'
-			})
+			}
+		}else{
+			props.history.push('/iniciar-sesion')
 		}
 	}
 
 	useEffect(() => {
-		consultarAPI(id)
+		if(auth.auth){
+			try {
+				consultarAPI(id);
+			} catch (error) {
+				if (error.response.status === 500) { // si viene un token pero no valido o vencido,
+                    //redirecciona a iniciar sesion
+                    props.history.push('/iniciar-sesion')
+                }
+			}
+		}else{
+			props.history.push('/productos');
+		}
 	}, [id]);
 
 	if(producto.nombre ==='') return <Spinner/>

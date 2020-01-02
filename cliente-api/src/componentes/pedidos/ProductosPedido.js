@@ -1,6 +1,8 @@
 import React from 'react';
 
 const ProductosPedido = ({pedido}) => {	
+    console.log(pedido);
+
 
 	return (
 		

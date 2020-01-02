@@ -2,6 +2,7 @@ import React, {useState,useEffect,useContext} from 'react';
 import clienteAxios from '../../config/axios';
 import Pedido from './Pedido';
 import {CRMContext} from '../../context/CRMContext';
+import Spinner from '../layout/Spinner';
 
 const Pedidos = (props) => {
 
@@ -15,7 +16,10 @@ const Pedidos = (props) => {
 			}
         })
 		.then(respuesta => {
-			guardarPedidos(respuesta.data.pedidos);
+
+			const listaPedidos = respuesta.data.pedidos;
+			guardarPedidos(listaPedidos);
+			
 		}).catch(err => console.error(err));
 	}
 
@@ -40,19 +44,21 @@ const Pedidos = (props) => {
 			props.history.push('/iniciar-sesion');
 		  }
 		
-	},[])
+	},[guardarPedidos])
 
-	if(!auth.auth){ props.history.push('/iniciar-sesion');}
+	if(pedidos.length < 1) return <Spinner/>
+
 	return (
 		<>
 			<ul className="listado-pedidos">
             {
-            	pedidos.map(pedido => (
-            		<Pedido 
+				
+				pedidos.map(pedido => (
+					<Pedido 
 						key={pedido._id}
 						pedido={pedido}
 					/>
-            	))
+				))
             }    
         	</ul>
 		</>

@@ -36,11 +36,19 @@ const Login = (props) => {
             history.push('/');
 
         }catch(err) {
-            Swal.fire({
-                type: 'error',
-                title: 'Error',
-                text: err.response.data.mensaje
-            });
+           if(err.response){ //error generado por express
+                Swal.fire({
+                    type: 'error',
+                    title: 'Error',
+                    text: err.response.data.mensaje
+                });
+           }else{
+                Swal.fire({
+                    type: 'error',
+                    title: 'Error',
+                    text: 'Hubo un error'
+                });
+           }
         }
     }
 

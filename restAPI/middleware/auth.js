@@ -21,7 +21,7 @@ module.exports = (req, res, next) => {
     }
 
     if (!verificarToken) { // si el token es valido pero tiene algun error
-        const error = new Error('No autenticado');
+        const error = new Error('Sesion invalida');
         error.statusCode = 401;
         throw error;
     }

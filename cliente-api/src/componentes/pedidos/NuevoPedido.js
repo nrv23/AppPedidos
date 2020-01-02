@@ -48,7 +48,7 @@ const NuevoPedido = (props) =>{
 				const query = busqueda;
 				const url ='/productos/busqueda/'+query;
 				
-				clienteAxios.post(url,{
+				clienteAxios.post(url,{},{
 					headers: {
 						Authorization: 'Bearer '+auth.token
 					}
@@ -146,8 +146,11 @@ const NuevoPedido = (props) =>{
 			})
 
 			try {
-				clienteAxios.post('/pedidos',pedido)
-				.then(respuesta => {
+				clienteAxios.post('/pedidos',pedido,{
+					headers: {
+						Authorization: 'Bearer '+auth.token
+					}
+				}).then(respuesta => {
 					
 					if(respuesta.status === 200){
 						Swal.fire({
